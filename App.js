@@ -10,80 +10,87 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
+import { StatusBar } from "expo-status-bar";
 
 export default function App() {
   // Estados - variáveis que mudam
-  const [tasks, setTasks] = useState([
-    { id: 1, title: "Exemplo de tarefa", done: 0 },
-    { id: 2, title: "Tarefa concluída", done: 1 }
+  const [characters, setCharacters] = useState([
+    { id: 1, name: "🧙‍♂️ Gandalf o Mago", recruited: 0 },
+    { id: 2, name: "⚔️ Aragorn o Guerreiro", recruited: 1 },
+    { id: 3, name: "🏹 Legolas o Arqueiro", recruited: 0 }
   ]);
-  const [newTask, setNewTask] = useState("");
+  const [newCharacter, setNewCharacter] = useState("");
 
-  // Adicionar nova tarefa
-  function addTask() {
-    if (newTask === "") return; // Se estiver vazio, não adicionar
+  // Adicionar novo personagem à party
+  function addCharacter() {
+    if (newCharacter === "") return; // Se estiver vazio, não adicionar
     
-    const newId = tasks.length + 1; // ID simples: próximo número
-    const newTaskObj = {
+    const newId = characters.length + 1; // ID simples: próximo número
+    const newCharacterObj = {
       id: newId,
-      title: newTask,
-      done: 0
+      name: newCharacter,
+      recruited: 0 // 0 = não recrutado, 1 = recrutado
     };
     
-    const newList = [newTaskObj]; // Nova tarefa primeiro
-    const allTasks = newList.concat(tasks); // Juntar com as antigas
-    setTasks(allTasks); // Atualizar lista
-    setNewTask(""); // Limpar campo
+    const newList = [newCharacterObj]; // Novo personagem primeiro
+    const allCharacters = newList.concat(characters); // Juntar com os antigos
+    setCharacters(allCharacters); // Atualizar lista
+    setNewCharacter(""); // Limpar campo
   }
 
-  // Marcar tarefa como feita/não feita
-  function toggleTask(task) {
-    const newTasks = [];
-    for (let i = 0; i < tasks.length; i++) {
-      const currentTask = tasks[i];
-      if (currentTask.id === task.id) {
-        // Esta é a tarefa que queremos mudar
-        const newStatus = currentTask.done ? 0 : 1;
-        newTasks.push({
-          id: currentTask.id,
-          title: currentTask.title,
-          done: newStatus
+  // Recrutar/dispensar personagem
+  function toggleRecruit(character) {
+    const newCharacters = [];
+    for (let i = 0; i < characters.length; i++) {
+      const currentChar = characters[i];
+      if (currentChar.id === character.id) {
+        // Este é o personagem que queremos mudar
+        const newStatus = currentChar.recruited ? 0 : 1;
+        newCharacters.push({
+          id: currentChar.id,
+          name: currentChar.name,
+          recruited: newStatus
         });
       } else {
-        // Esta tarefa não muda
-        newTasks.push(currentTask);
+        // Este personagem não muda
+        newCharacters.push(currentChar);
       }
     }
-    setTasks(newTasks);
+    setCharacters(newCharacters);
   }
 
-  // Excluir tarefa
-  function deleteTask(task) {
-    Alert.alert("Excluir", `Excluir "${task.title}"?`, [
+  // Remover personagem da party
+  function removeCharacter(character) {
+    Alert.alert("Remover Personagem", `Remover "${character.name}" da party?`, [
       { text: "Não" },
       { 
         text: "Sim", 
         onPress: () => {
-          const filteredTasks = tasks.filter(t => t.id !== task.id);
-          setTasks(filteredTasks);
+          const newList = [];
+          for (let i = 0; i < characters.length; i++) {
+            if (characters[i].id !== character.id) {
+              newList.push(characters[i]);
+            }
+          }
+          setCharacters(newList);
         }
       }
     ]);
   }
 
-  // Como mostrar cada tarefa
-  function renderTask({ item }) {
+  // Como mostrar cada personagem
+  function renderCharacter({ item }) {
     return (
       <TouchableOpacity
-        style={[styles.task, item.done && styles.taskDone]}
-        onPress={() => toggleTask(item)}
-        onLongPress={() => deleteTask(item)}
+        style={[styles.character, item.recruited && styles.characterRecruited]}
+        onPress={() => toggleRecruit(item)}
+        onLongPress={() => removeCharacter(item)}
       >
-        <Text style={[styles.taskText, item.done && styles.taskTextDone]}>
-          {item.title}
+        <Text style={[styles.characterText, item.recruited && styles.characterRecruitedText]}>
+          {item.name}
         </Text>
         <Text style={styles.status}>
-          {item.done ? "✓" : "○"}
+          {item.recruited ? "⭐" : "💤"}
         </Text>
       </TouchableOpacity>
     );
@@ -91,28 +98,30 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar style="dark" />
       {/* Título */}
-      <Text style={styles.title}>📝 Lista de Tarefas</Text>
+      <Text style={styles.title}>🏰 Minha Party RPG</Text>
+      <Text style={styles.subtitle}>⭐ Recrutado • 💤 Disponível • Segure para remover</Text>
 
-      {/* Adicionar nova tarefa */}
+      {/* Adicionar novo personagem */}
       <View style={styles.inputRow}>
         <TextInput
           style={styles.input}
-          placeholder="Nova tarefa..."
-          value={newTask}
-          onChangeText={setNewTask}
-          onSubmitEditing={addTask}
+          placeholder="🎭 Nome do novo personagem..."
+          value={newCharacter}
+          onChangeText={setNewCharacter}
+          onSubmitEditing={addCharacter}
         />
-        <TouchableOpacity style={styles.button} onPress={addTask}>
-          <Text style={styles.buttonText}>+</Text>
+        <TouchableOpacity style={styles.button} onPress={addCharacter}>
+          <Text style={styles.buttonText}>⚔️</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Lista de tarefas */}
+      {/* Lista de personagens */}
       <FlatList
-        data={tasks}
+        data={characters}
         keyExtractor={(item) => String(item.id)}
-        renderItem={renderTask}
+        renderItem={renderCharacter}
         style={styles.list}
       />
     </SafeAreaView>
@@ -123,14 +132,23 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f0f0",
-    padding: 20,
+    backgroundColor: "#2c1810", // Fundo escuro medieval
+    paddingTop: 50, // Espaço para status bar
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "bold",
     textAlign: "center",
+    marginBottom: 8,
+    color: "#FFD700", // Dourado real
+  },
+  subtitle: {
+    fontSize: 12,
+    textAlign: "center",
     marginBottom: 20,
+    color: "#B8860B", // Dourado mais escuro
   },
   inputRow: {
     flexDirection: "row",
@@ -138,51 +156,61 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 5,
-    padding: 10,
-    backgroundColor: "#fff",
+    borderWidth: 2,
+    borderColor: "#8B4513", // Marrom medieval
+    borderRadius: 8,
+    padding: 12,
+    backgroundColor: "#F5E6D3", // Pergaminho
+    color: "#2c1810",
+    fontSize: 16,
   },
   button: {
-    backgroundColor: "#007AFF",
-    padding: 10,
-    borderRadius: 5,
+    backgroundColor: "#8B0000", // Vermelho sangue
+    padding: 12,
+    borderRadius: 8,
     marginLeft: 10,
     justifyContent: "center",
     alignItems: "center",
     width: 50,
+    borderWidth: 1,
+    borderColor: "#FFD700",
   },
   buttonText: {
-    color: "#fff",
-    fontSize: 20,
+    color: "#FFD700",
+    fontSize: 18,
     fontWeight: "bold",
   },
   list: {
     flex: 1,
   },
-  task: {
-    backgroundColor: "#fff",
+  character: {
+    backgroundColor: "#3C2E26", // Marrom escuro
     padding: 15,
-    borderRadius: 5,
+    borderRadius: 8,
     marginBottom: 10,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#8B4513",
   },
-  taskDone: {
-    backgroundColor: "#e0e0e0",
+  characterRecruited: {
+    backgroundColor: "#2F4F2F", // Verde escuro para recrutado
+    borderColor: "#FFD700",
+    borderWidth: 2,
   },
-  taskText: {
+  characterText: {
     flex: 1,
     fontSize: 16,
+    color: "#F5E6D3", // Cor de pergaminho
+    fontWeight: "500",
   },
-  taskTextDone: {
-    textDecorationLine: "line-through",
-    color: "#888",
+  characterRecruitedText: {
+    color: "#FFD700", // Dourado para recrutados
+    fontWeight: "bold",
   },
   status: {
-    fontSize: 18,
+    fontSize: 20,
     marginLeft: 10,
   },
 });
