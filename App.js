@@ -14,7 +14,7 @@ import { StatusBar } from "expo-status-bar";
 import * as SQLite from "expo-sqlite";
 
 // Conectar ao banco SQLite
-const db = SQLite.openDatabase("party.db");
+const db = SQLite.openDatabaseSync("party.db");
 
 export default function App() {
   // Estados - variáveis que mudam
@@ -23,86 +23,64 @@ export default function App() {
 
   // Criar tabela e carregar dados quando app iniciar
   useEffect(() => {
-    db.transaction(tx => {
+    try {
       // Criar tabela se não existir
-      tx.executeSql(
-        "CREATE TABLE IF NOT EXISTS characters (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, recruited INTEGER);",
-        [],
-        () => {
-          console.log("Tabela criada!");
-          // Inserir dados iniciais se tabela estiver vazia
-          tx.executeSql(
-            "SELECT COUNT(*) as count FROM characters",
-            [],
-            (_, result) => {
-              if (result.rows.item(0).count === 0) {
-                // Inserir personagens iniciais
-                tx.executeSql("INSERT INTO characters (name, recruited) VALUES (?, ?)", ["🧙‍♂️ Gandalf o Mago", 0]);
-                tx.executeSql("INSERT INTO characters (name, recruited) VALUES (?, ?)", ["⚔️ Aragorn o Guerreiro", 1]);
-                tx.executeSql("INSERT INTO characters (name, recruited) VALUES (?, ?)", ["🏹 Legolas o Arqueiro", 0]);
-              }
-              loadCharacters();
-            }
-          );
-        },
-        (_, error) => console.log("Erro:", error)
-      );
-    });
+      db.execSync("CREATE TABLE IF NOT EXISTS characters (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, recruited INTEGER);");
+      console.log("Tabela criada!");
+      
+      // Verificar se há dados
+      const result = db.getFirstSync("SELECT COUNT(*) as count FROM characters");
+      
+      if (result.count === 0) {
+        // Inserir personagens iniciais
+        db.runSync("INSERT INTO characters (name, recruited) VALUES (?, ?)", ["🧙‍♂️ Gandalf o Mago", 0]);
+        db.runSync("INSERT INTO characters (name, recruited) VALUES (?, ?)", ["⚔️ Aragorn o Guerreiro", 1]);
+        db.runSync("INSERT INTO characters (name, recruited) VALUES (?, ?)", ["🏹 Legolas o Arqueiro", 0]);
+      }
+      
+      loadCharacters();
+    } catch (error) {
+      console.log("Erro ao inicializar banco:", error);
+    }
   }, []);
 
   // Carregar personagens do banco
   function loadCharacters() {
-    db.transaction(tx => {
-      tx.executeSql(
-        "SELECT * FROM characters ORDER BY id DESC",
-        [],
-        (_, result) => {
-          const loadedCharacters = [];
-          for (let i = 0; i < result.rows.length; i++) {
-            loadedCharacters.push(result.rows.item(i));
-          }
-          setCharacters(loadedCharacters);
-        },
-        (_, error) => console.log("Erro ao carregar:", error)
-      );
-    });
+    try {
+      const result = db.getAllSync("SELECT * FROM characters ORDER BY id DESC");
+      setCharacters(result);
+    } catch (error) {
+      console.log("Erro ao carregar:", error);
+    }
   }
 
   // Adicionar novo personagem à party
   function addCharacter() {
     if (newCharacter === "") return; // Se estiver vazio, não adicionar
     
-    // Salvar no banco SQLite
-    db.transaction(tx => {
-      tx.executeSql(
-        "INSERT INTO characters (name, recruited) VALUES (?, ?)",
-        [newCharacter, 0], // 0 = não recrutado
-        (_, result) => {
-          console.log("Personagem salvo no banco!");
-          loadCharacters(); // Recarregar lista do banco
-          setNewCharacter(""); // Limpar campo
-        },
-        (_, error) => console.log("Erro ao salvar:", error)
-      );
-    });
+    try {
+      // Salvar no banco SQLite
+      db.runSync("INSERT INTO characters (name, recruited) VALUES (?, ?)", [newCharacter, 0]);
+      console.log("Personagem salvo no banco!");
+      loadCharacters(); // Recarregar lista do banco
+      setNewCharacter(""); // Limpar campo
+    } catch (error) {
+      console.log("Erro ao salvar:", error);
+    }
   }
 
   // Recrutar/dispensar personagem
   function toggleRecruit(character) {
     const newStatus = character.recruited ? 0 : 1;
     
-    // Atualizar no banco SQLite
-    db.transaction(tx => {
-      tx.executeSql(
-        "UPDATE characters SET recruited = ? WHERE id = ?",
-        [newStatus, character.id],
-        (_, result) => {
-          console.log("Status atualizado no banco!");
-          loadCharacters(); // Recarregar lista do banco
-        },
-        (_, error) => console.log("Erro ao atualizar:", error)
-      );
-    });
+    try {
+      // Atualizar no banco SQLite
+      db.runSync("UPDATE characters SET recruited = ? WHERE id = ?", [newStatus, character.id]);
+      console.log("Status atualizado no banco!");
+      loadCharacters(); // Recarregar lista do banco
+    } catch (error) {
+      console.log("Erro ao atualizar:", error);
+    }
   }
 
   // Remover personagem da party
@@ -112,18 +90,14 @@ export default function App() {
       { 
         text: "Sim", 
         onPress: () => {
-          // Remover do banco SQLite
-          db.transaction(tx => {
-            tx.executeSql(
-              "DELETE FROM characters WHERE id = ?",
-              [character.id],
-              (_, result) => {
-                console.log("Personagem removido do banco!");
-                loadCharacters(); // Recarregar lista do banco
-              },
-              (_, error) => console.log("Erro ao remover:", error)
-            );
-          });
+          try {
+            // Remover do banco SQLite
+            db.runSync("DELETE FROM characters WHERE id = ?", [character.id]);
+            console.log("Personagem removido do banco!");
+            loadCharacters(); // Recarregar lista do banco
+          } catch (error) {
+            console.log("Erro ao remover:", error);
+          }
         }
       }
     ]);
