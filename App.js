@@ -1,5 +1,5 @@
-// App.js
-import React, { useEffect, useState, useRef } from "react";
+// App.js - Lista de Tarefas SUPER SIMPLES (sem banco por enquanto)
+import React, { useState } from "react";
 import {
   SafeAreaView,
   View,
@@ -9,280 +9,180 @@ import {
   FlatList,
   StyleSheet,
   Alert,
-  Keyboard,
 } from "react-native";
-import { initDB, executeSql, executeQuery } from "./db";
-import { Platform } from "react-native";
 
 export default function App() {
-  const [tasks, setTasks] = useState([]);
-  const [title, setTitle] = useState("");
-  const inputRef = useRef(null);
-
-  // Inicialização do app
-  useEffect(() => {
-    async function prepare() {
-      try {
-        await initDB();
-        await seedIfEmpty();
-        await loadTasks();
-      } catch (err) {
-        console.error("DB init error", err);
-        Alert.alert("Erro", "Falha ao inicializar banco de dados");
-      }
-    }
-    prepare();
-  }, []);
-
-  // Adicionar dados de exemplo se estiver vazio
-  async function seedIfEmpty() {
-    const res = await executeQuery("SELECT COUNT(*) as c FROM tasks;");
-    const count = res.rows.item(0).c;
-    if (count === 0) {
-      await executeSql("INSERT INTO tasks (title, done) VALUES (?, ?);", [
-        "Bem-vindo ao SQLite!",
-        0,
-      ]);
-      await executeSql("INSERT INTO tasks (title, done) VALUES (?, ?);", [
-        "Toque para marcar como concluída",
-        0,
-      ]);
-    }
-  }
-
-  // Carregar todas as tarefas
-  async function loadTasks() {
-    try {
-      const res = await executeQuery("SELECT * FROM tasks ORDER BY id DESC;");
-      const rows = [];
-      for (let i = 0; i < res.rows.length; i++) {
-        rows.push(res.rows.item(i));
-      }
-      setTasks(rows);
-    } catch (err) {
-      console.error("loadTasks", err);
-      Alert.alert("Erro", "Falha ao carregar tarefas");
-    }
-  }
+  // Estados - variáveis que mudam
+  const [tasks, setTasks] = useState([
+    { id: 1, title: "Exemplo de tarefa", done: 0 },
+    { id: 2, title: "Tarefa concluída", done: 1 }
+  ]);
+  const [newTask, setNewTask] = useState("");
 
   // Adicionar nova tarefa
-  async function addTask() {
-    const trimmed = title.trim();
-    if (!trimmed) return;
-
-    try {
-      await executeSql("INSERT INTO tasks (title, done) VALUES (?, ?);", [
-        trimmed,
-        0,
-      ]);
-      setTitle("");
-      Keyboard.dismiss();
-      await loadTasks();
-      inputRef.current?.focus();
-    } catch (err) {
-      console.error("addTask", err);
-      Alert.alert("Erro", "Falha ao adicionar tarefa");
-    }
+  function addTask() {
+    if (newTask === "") return; // Se estiver vazio, não adicionar
+    
+    const newId = tasks.length + 1; // ID simples: próximo número
+    const newTaskObj = {
+      id: newId,
+      title: newTask,
+      done: 0
+    };
+    
+    const newList = [newTaskObj]; // Nova tarefa primeiro
+    const allTasks = newList.concat(tasks); // Juntar com as antigas
+    setTasks(allTasks); // Atualizar lista
+    setNewTask(""); // Limpar campo
   }
 
-  // Alternar status da tarefa
-  async function toggleDone(item) {
-    try {
-      const newDone = item.done ? 0 : 1;
-      await executeSql("UPDATE tasks SET done = ? WHERE id = ?;", [
-        newDone,
-        item.id,
-      ]);
-      await loadTasks();
-    } catch (err) {
-      console.error("toggleDone", err);
-      Alert.alert("Erro", "Falha ao atualizar tarefa");
+  // Marcar tarefa como feita/não feita
+  function toggleTask(task) {
+    const newTasks = [];
+    for (let i = 0; i < tasks.length; i++) {
+      const currentTask = tasks[i];
+      if (currentTask.id === task.id) {
+        // Esta é a tarefa que queremos mudar
+        const newStatus = currentTask.done ? 0 : 1;
+        newTasks.push({
+          id: currentTask.id,
+          title: currentTask.title,
+          done: newStatus
+        });
+      } else {
+        // Esta tarefa não muda
+        newTasks.push(currentTask);
+      }
     }
+    setTasks(newTasks);
   }
 
   // Excluir tarefa
-  async function deleteTask(item) {
-    Alert.alert("Confirmar", `Excluir "${item.title}"?`, [
-      { text: "Cancelar", style: "cancel" },
-      {
-        text: "Excluir",
-        style: "destructive",
-        onPress: async () => {
-          try {
-            await executeSql("DELETE FROM tasks WHERE id = ?;", [item.id]);
-            await loadTasks();
-          } catch (err) {
-            console.error("deleteTask", err);
-            Alert.alert("Erro", "Falha ao excluir tarefa");
-          }
-        },
-      },
+  function deleteTask(task) {
+    Alert.alert("Excluir", `Excluir "${task.title}"?`, [
+      { text: "Não" },
+      { 
+        text: "Sim", 
+        onPress: () => {
+          const filteredTasks = tasks.filter(t => t.id !== task.id);
+          setTasks(filteredTasks);
+        }
+      }
     ]);
   }
 
-  // Renderizar item da lista
-  function renderItem({ item }) {
+  // Como mostrar cada tarefa
+  function renderTask({ item }) {
     return (
       <TouchableOpacity
-        style={[styles.item, item.done ? styles.itemDone : null]}
-        onPress={() => toggleDone(item)}
+        style={[styles.task, item.done && styles.taskDone]}
+        onPress={() => toggleTask(item)}
         onLongPress={() => deleteTask(item)}
       >
-        <Text style={[styles.itemText, item.done ? styles.itemTextDone : null]}>
+        <Text style={[styles.taskText, item.done && styles.taskTextDone]}>
           {item.title}
         </Text>
-        <Text style={styles.status}>{item.done ? "✓" : ""}</Text>
+        <Text style={styles.status}>
+          {item.done ? "✓" : "○"}
+        </Text>
       </TouchableOpacity>
     );
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>SQLite Tasks</Text>
-        <Text style={styles.subtitle}>
-          Toque = alternar • Pressione = excluir
-        </Text>
-      </View>
+      {/* Título */}
+      <Text style={styles.title}>📝 Lista de Tarefas</Text>
 
+      {/* Adicionar nova tarefa */}
       <View style={styles.inputRow}>
         <TextInput
-          ref={inputRef}
           style={styles.input}
           placeholder="Nova tarefa..."
-          value={title}
-          onChangeText={setTitle}
+          value={newTask}
+          onChangeText={setNewTask}
           onSubmitEditing={addTask}
-          returnKeyType="done"
         />
-        <TouchableOpacity style={styles.addBtn} onPress={addTask}>
-          <Text style={styles.addBtnText}>Adicionar</Text>
+        <TouchableOpacity style={styles.button} onPress={addTask}>
+          <Text style={styles.buttonText}>+</Text>
         </TouchableOpacity>
       </View>
 
+      {/* Lista de tarefas */}
       <FlatList
         data={tasks}
-        keyExtractor={(i) => String(i.id)}
-        renderItem={renderItem}
-        contentContainerStyle={styles.list}
-        ListEmptyComponent={
-          <Text style={styles.empty}>Nenhuma tarefa ainda</Text>
-        }
+        keyExtractor={(item) => String(item.id)}
+        renderItem={renderTask}
+        style={styles.list}
       />
-
-      <TouchableOpacity style={styles.refreshBtn} onPress={loadTasks}>
-        <Text style={styles.refreshBtnText}>Atualizar Lista</Text>
-      </TouchableOpacity>
     </SafeAreaView>
   );
 }
 
+// Estilos simples
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  header: {
+    backgroundColor: "#f0f0f0",
     padding: 20,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#333",
     textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 12,
-    color: "#666",
-    textAlign: "center",
-    marginTop: 5,
+    marginBottom: 20,
   },
   inputRow: {
     flexDirection: "row",
-    padding: 20,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
+    marginBottom: 20,
   },
   input: {
     flex: 1,
     borderWidth: 1,
     borderColor: "#ddd",
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    paddingVertical: 12,
-    fontSize: 16,
+    borderRadius: 5,
+    padding: 10,
     backgroundColor: "#fff",
   },
-  addBtn: {
-    marginLeft: 10,
+  button: {
     backgroundColor: "#007AFF",
-    borderRadius: 8,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
+    padding: 10,
+    borderRadius: 5,
+    marginLeft: 10,
     justifyContent: "center",
+    alignItems: "center",
+    width: 50,
   },
-  addBtnText: {
+  buttonText: {
     color: "#fff",
+    fontSize: 20,
     fontWeight: "bold",
-    fontSize: 16,
   },
   list: {
-    padding: 20,
+    flex: 1,
   },
-  item: {
+  task: {
     backgroundColor: "#fff",
     padding: 15,
-    borderRadius: 8,
+    borderRadius: 5,
     marginBottom: 10,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
-    elevation: 3,
   },
-  itemDone: {
-    backgroundColor: "#f0f0f0",
+  taskDone: {
+    backgroundColor: "#e0e0e0",
   },
-  itemText: {
+  taskText: {
     flex: 1,
     fontSize: 16,
-    color: "#333",
   },
-  itemTextDone: {
+  taskTextDone: {
     textDecorationLine: "line-through",
-    color: "#999",
+    color: "#888",
   },
   status: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "#4CAF50",
     marginLeft: 10,
-  },
-  empty: {
-    textAlign: "center",
-    fontSize: 16,
-    color: "#999",
-    marginTop: 50,
-  },
-  refreshBtn: {
-    margin: 20,
-    backgroundColor: "#f0f0f0",
-    borderRadius: 8,
-    padding: 15,
-    alignItems: "center",
-  },
-  refreshBtnText: {
-    fontSize: 16,
-    color: "#666",
   },
 });

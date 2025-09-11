@@ -1,6 +1,7 @@
 {
-  "name": "mobile-sqlite-demo",
+  "name": "app-tarefas-sqlite",
   "version": "1.0.0",
+  "description": "App de tarefas simples com SQLite e React Native",
   "main": "index.js",
   "scripts": {
     "start": "expo start",
@@ -10,16 +11,22 @@
   },
   "dependencies": {
     "expo": "~53.0.22",
+    "expo-sqlite": "~15.2.14",
     "expo-status-bar": "~2.2.3",
     "react": "19.0.0",
-    "react-native": "0.79.5",
-    "expo-sqlite": "~15.2.14",
-    "react-dom": "19.0.0",
-    "react-native-web": "^0.20.0",
-    "@expo/metro-runtime": "~5.0.4"
+    "react-native": "0.79.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
   },
+  "keywords": [
+    "react-native",
+    "expo",
+    "sqlite",
+    "tarefas",
+    "mobile"
+  ],
+  "author": "Desenvolvedor",
+  "license": "MIT",
   "private": true
 }
