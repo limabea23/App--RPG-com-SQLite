@@ -132,7 +132,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#2c1810", // Fundo escuro medieval
+    backgroundColor: "#1A0E0A", // Vermelho D&D muito escuro
     paddingTop: 50, // Espaço para status bar
     paddingHorizontal: 20,
     paddingBottom: 20,
@@ -142,13 +142,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 8,
-    color: "#FFD700", // Dourado real
+    color: "#E69A28", // Dourado D&D oficial
   },
   subtitle: {
     fontSize: 12,
     textAlign: "center",
     marginBottom: 20,
-    color: "#B8860B", // Dourado mais escuro
+    color: "#C5282F", // Vermelho D&D
   },
   inputRow: {
     flexDirection: "row",
@@ -157,26 +157,26 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     borderWidth: 2,
-    borderColor: "#8B4513", // Marrom medieval
+    borderColor: "#E69A28", // Dourado D&D
     borderRadius: 8,
     padding: 12,
-    backgroundColor: "#F5E6D3", // Pergaminho
-    color: "#2c1810",
+    backgroundColor: "#F4E4BC", // Pergaminho D&D
+    color: "#1A0E0A",
     fontSize: 16,
   },
   button: {
-    backgroundColor: "#8B0000", // Vermelho sangue
+    backgroundColor: "#C5282F", // Vermelho D&D oficial
     padding: 12,
     borderRadius: 8,
     marginLeft: 10,
     justifyContent: "center",
     alignItems: "center",
     width: 50,
-    borderWidth: 1,
-    borderColor: "#FFD700",
+    borderWidth: 2,
+    borderColor: "#E69A28", // Borda dourada D&D
   },
   buttonText: {
-    color: "#FFD700",
+    color: "#E69A28", // Dourado D&D
     fontSize: 18,
     fontWeight: "bold",
   },
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   character: {
-    backgroundColor: "#3C2E26", // Marrom escuro
+    backgroundColor: "#2C1810", // Marrom D&D
     padding: 15,
     borderRadius: 8,
     marginBottom: 10,
@@ -192,21 +192,21 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#8B4513",
+    borderColor: "#58180D", // Vermelho escuro D&D
   },
   characterRecruited: {
-    backgroundColor: "#2F4F2F", // Verde escuro para recrutado
-    borderColor: "#FFD700",
+    backgroundColor: "#58180D", // Vermelho escuro D&D para recrutado
+    borderColor: "#E69A28", // Dourado D&D
     borderWidth: 2,
   },
   characterText: {
     flex: 1,
     fontSize: 16,
-    color: "#F5E6D3", // Cor de pergaminho
+    color: "#F4E4BC", // Pergaminho D&D
     fontWeight: "500",
   },
   characterRecruitedText: {
-    color: "#FFD700", // Dourado para recrutados
+    color: "#E69A28", // Dourado D&D para recrutados
     fontWeight: "bold",
   },
   status: {
