@@ -1,5 +1,5 @@
-// App.js - Lista de Tarefas SUPER SIMPLES (sem banco por enquanto)
-import React, { useState } from "react";
+// App.js - Party RPG com SQLite
+import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
   View,
@@ -11,52 +11,98 @@ import {
   Alert,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import * as SQLite from "expo-sqlite";
+
+// Conectar ao banco SQLite
+const db = SQLite.openDatabase("party.db");
 
 export default function App() {
   // Estados - variáveis que mudam
-  const [characters, setCharacters] = useState([
-    { id: 1, name: "🧙‍♂️ Gandalf o Mago", recruited: 0 },
-    { id: 2, name: "⚔️ Aragorn o Guerreiro", recruited: 1 },
-    { id: 3, name: "🏹 Legolas o Arqueiro", recruited: 0 }
-  ]);
+  const [characters, setCharacters] = useState([]);
   const [newCharacter, setNewCharacter] = useState("");
+
+  // Criar tabela e carregar dados quando app iniciar
+  useEffect(() => {
+    db.transaction(tx => {
+      // Criar tabela se não existir
+      tx.executeSql(
+        "CREATE TABLE IF NOT EXISTS characters (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, recruited INTEGER);",
+        [],
+        () => {
+          console.log("Tabela criada!");
+          // Inserir dados iniciais se tabela estiver vazia
+          tx.executeSql(
+            "SELECT COUNT(*) as count FROM characters",
+            [],
+            (_, result) => {
+              if (result.rows.item(0).count === 0) {
+                // Inserir personagens iniciais
+                tx.executeSql("INSERT INTO characters (name, recruited) VALUES (?, ?)", ["🧙‍♂️ Gandalf o Mago", 0]);
+                tx.executeSql("INSERT INTO characters (name, recruited) VALUES (?, ?)", ["⚔️ Aragorn o Guerreiro", 1]);
+                tx.executeSql("INSERT INTO characters (name, recruited) VALUES (?, ?)", ["🏹 Legolas o Arqueiro", 0]);
+              }
+              loadCharacters();
+            }
+          );
+        },
+        (_, error) => console.log("Erro:", error)
+      );
+    });
+  }, []);
+
+  // Carregar personagens do banco
+  function loadCharacters() {
+    db.transaction(tx => {
+      tx.executeSql(
+        "SELECT * FROM characters ORDER BY id DESC",
+        [],
+        (_, result) => {
+          const loadedCharacters = [];
+          for (let i = 0; i < result.rows.length; i++) {
+            loadedCharacters.push(result.rows.item(i));
+          }
+          setCharacters(loadedCharacters);
+        },
+        (_, error) => console.log("Erro ao carregar:", error)
+      );
+    });
+  }
 
   // Adicionar novo personagem à party
   function addCharacter() {
     if (newCharacter === "") return; // Se estiver vazio, não adicionar
     
-    const newId = characters.length + 1; // ID simples: próximo número
-    const newCharacterObj = {
-      id: newId,
-      name: newCharacter,
-      recruited: 0 // 0 = não recrutado, 1 = recrutado
-    };
-    
-    const newList = [newCharacterObj]; // Novo personagem primeiro
-    const allCharacters = newList.concat(characters); // Juntar com os antigos
-    setCharacters(allCharacters); // Atualizar lista
-    setNewCharacter(""); // Limpar campo
+    // Salvar no banco SQLite
+    db.transaction(tx => {
+      tx.executeSql(
+        "INSERT INTO characters (name, recruited) VALUES (?, ?)",
+        [newCharacter, 0], // 0 = não recrutado
+        (_, result) => {
+          console.log("Personagem salvo no banco!");
+          loadCharacters(); // Recarregar lista do banco
+          setNewCharacter(""); // Limpar campo
+        },
+        (_, error) => console.log("Erro ao salvar:", error)
+      );
+    });
   }
 
   // Recrutar/dispensar personagem
   function toggleRecruit(character) {
-    const newCharacters = [];
-    for (let i = 0; i < characters.length; i++) {
-      const currentChar = characters[i];
-      if (currentChar.id === character.id) {
-        // Este é o personagem que queremos mudar
-        const newStatus = currentChar.recruited ? 0 : 1;
-        newCharacters.push({
-          id: currentChar.id,
-          name: currentChar.name,
-          recruited: newStatus
-        });
-      } else {
-        // Este personagem não muda
-        newCharacters.push(currentChar);
-      }
-    }
-    setCharacters(newCharacters);
+    const newStatus = character.recruited ? 0 : 1;
+    
+    // Atualizar no banco SQLite
+    db.transaction(tx => {
+      tx.executeSql(
+        "UPDATE characters SET recruited = ? WHERE id = ?",
+        [newStatus, character.id],
+        (_, result) => {
+          console.log("Status atualizado no banco!");
+          loadCharacters(); // Recarregar lista do banco
+        },
+        (_, error) => console.log("Erro ao atualizar:", error)
+      );
+    });
   }
 
   // Remover personagem da party
@@ -66,13 +112,18 @@ export default function App() {
       { 
         text: "Sim", 
         onPress: () => {
-          const newList = [];
-          for (let i = 0; i < characters.length; i++) {
-            if (characters[i].id !== character.id) {
-              newList.push(characters[i]);
-            }
-          }
-          setCharacters(newList);
+          // Remover do banco SQLite
+          db.transaction(tx => {
+            tx.executeSql(
+              "DELETE FROM characters WHERE id = ?",
+              [character.id],
+              (_, result) => {
+                console.log("Personagem removido do banco!");
+                loadCharacters(); // Recarregar lista do banco
+              },
+              (_, error) => console.log("Erro ao remover:", error)
+            );
+          });
         }
       }
     ]);
