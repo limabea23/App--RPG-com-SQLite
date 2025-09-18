@@ -138,9 +138,6 @@ export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="dark" />
-      {/* Título */}
-      <Text style={styles.title}>🏰 Minha Party RPG</Text>
-      <Text style={styles.subtitle}>⭐ Recrutado • 💤 Disponível • Segure para remover</Text>
 
       {/* Adicionar novo personagem */}
       <View style={styles.inputRow}>
@@ -175,19 +172,6 @@ const styles = StyleSheet.create({
     paddingTop: 50, // Espaço para status bar
     paddingHorizontal: 20,
     paddingBottom: 20,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 8,
-    color: "#E69A28", // Dourado D&D oficial
-  },
-  subtitle: {
-    fontSize: 12,
-    textAlign: "center",
-    marginBottom: 20,
-    color: "#C5282F", // Vermelho D&D
   },
   inputRow: {
     flexDirection: "row",
