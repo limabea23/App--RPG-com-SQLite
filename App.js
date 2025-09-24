@@ -117,18 +117,6 @@ export default function App() {
       }
     ]);
   }
-
-  // Como mostrar cada personagem
-  function renderCharacter({ item }) {
-    return (
-      <CharacterCard
-        character={item}
-        onToggleRecruit={toggleRecruit}
-        onRemove={removeCharacter}
-      />
-    );
-  }
-
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="dark" />
@@ -151,7 +139,13 @@ export default function App() {
       <FlatList
         data={characters}
         keyExtractor={(item) => String(item.id)}
-        renderItem={renderCharacter}
+        renderItem={({ item }) => (
+          <CharacterCard
+            character={item}
+            onToggleRecruit={toggleRecruit}
+            onRemove={removeCharacter}
+          />
+        )}
         style={styles.list}
       />
     </SafeAreaView>
