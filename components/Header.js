@@ -5,13 +5,16 @@ export default function Header() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>🏰 Minha Party RPG</Text>
-      <Text style={styles.subtitle}>⭐ Recrutado • 💤 Disponível • Segure para remover</Text>
+      <Text style={styles.subtitle}>⭐ Recrutado • 💤 Disponível • Toque no ícone para alternar</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-    title: {
+  container: {
+    marginBottom: 12,
+  },
+  title: {
     fontSize: 28,
     fontWeight: "bold",
     textAlign: "center",
@@ -21,7 +24,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 12,
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: 12,
     color: "#C5282F", 
   },
-})
+});

@@ -8,19 +8,22 @@ export default function CharacterCard({ character, onToggleRecruit, onRemove }) 
             <Card.Title
                 title={character.name}
                 titleStyle={[styles.characterText, character.recruited && styles.characterRecruitedText]}
-                        right={() => (
-                            <IconButton
-                                icon={character.recruited ? "⭐" : "💤"}
-                                color={character.recruited ? "#E69A28" : "#F4E4BC"}
-                                onPress={() => onToggleRecruit(character)}
-                            />
-                        )}
+                right={() => (
+                    <IconButton
+                        icon={character.recruited ? 'star' : 'sleep'}
+                        selected={!!character.recruited}
+                        iconColor={character.recruited ? '#E69A28' : '#F4E4BC'}
+                        onPress={() => onToggleRecruit(character)}
+                        accessibilityLabel={character.recruited ? 'Recrutado' : 'Disponível'}
+                    />
+                )}
             />
             <Card.Actions>
                 <IconButton
                     icon="delete"
-                    color="#C5282F"
+                    iconColor="#C5282F"
                     onPress={() => onRemove(character)}
+                    accessibilityLabel="Remover"
                 />
             </Card.Actions>
         </Card>
