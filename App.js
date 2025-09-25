@@ -13,6 +13,7 @@ import {
 import { StatusBar } from "expo-status-bar";
 import * as SQLite from "expo-sqlite";
 import CharacterCard from "./components/CharacterCard";
+import AddCharacterForm from "./components/AddCharacterForm";
 
 export default function App() {
   // Estados - variáveis que mudam
@@ -122,18 +123,11 @@ export default function App() {
       <StatusBar style="dark" />
 
       {/* Adicionar novo personagem */}
-      <View style={styles.inputRow}>
-        <TextInput
-          style={styles.input}
-          placeholder="🎭 Nome do novo personagem..."
-          value={newCharacter}
-          onChangeText={setNewCharacter}
-          onSubmitEditing={addCharacter}
-        />
-        <TouchableOpacity style={styles.button} onPress={addCharacter}>
-          <Text style={styles.buttonText}>⚔️</Text>
-        </TouchableOpacity>
-      </View>
+      <AddCharacterForm
+        newCharacter={newCharacter}
+        setNewCharacter={setNewCharacter}
+        addCharacter={addCharacter}
+      />
 
       {/* Lista de personagens */}
       <FlatList
@@ -160,36 +154,6 @@ const styles = StyleSheet.create({
     paddingTop: 50, // Espaço para status bar
     paddingHorizontal: 20,
     paddingBottom: 20,
-  },
-  inputRow: {
-    flexDirection: "row",
-    marginBottom: 20,
-  },
-  input: {
-    flex: 1,
-    borderWidth: 2,
-    borderColor: "#E69A28", // Dourado D&D
-    borderRadius: 8,
-    padding: 12,
-    backgroundColor: "#F4E4BC", // Pergaminho D&D
-    color: "#1A0E0A",
-    fontSize: 16,
-  },
-  button: {
-    backgroundColor: "#C5282F", // Vermelho D&D oficial
-    padding: 12,
-    borderRadius: 8,
-    marginLeft: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    width: 50,
-    borderWidth: 2,
-    borderColor: "#E69A28", // Borda dourada D&D
-  },
-  buttonText: {
-    color: "#E69A28", // Dourado D&D
-    fontSize: 18,
-    fontWeight: "bold",
   },
   list: {
     flex: 1,
