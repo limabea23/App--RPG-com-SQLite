@@ -38,12 +38,12 @@ npm start
 ## 📁 Arquivos
 
 ```bash
-mobile-sqlite-app/
+app-RPG-COM_SQLITE
 ├── assets/             
 ├── components / 
-├── app.json       
-├── package.json    
-├── app.json            
+├── App.js      
+├── app.json     
+└── package.json                
 ```
 ---
 
