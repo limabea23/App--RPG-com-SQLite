@@ -1,29 +1,32 @@
-# 📝 Lista de Tarefas Simples - SQLite
+## 🎲 Party RPG com SQLite - React Native
 
-Um app **MUITO SIMPLES** para ensinar React Native + SQLite.
 
-## 🎯 O que faz?
+### 🧩 Melhorias Aplicadas
 
-- ✅ Adicionar tarefas
-- ✏️ Marcar como feitas
-- 🗑️ Excluir tarefas
-- 💾 Salva no celular
+- **Componentização:**  
+  Principais partes separadas em componentes (`Header`, `AddCharacterForm`, `CharacterCard`).  
+  *→ Mais organização, manutenção e evolução facilitada.*
 
-## � Como usar?
+- **UI Profissional:**  
+  Uso da biblioteca **React Native Paper** para Cards, Botões, Inputs, Snackbar e Ícones.  
+  *→ Interface moderna, padronizada e agradável.*
 
-1. **Adicionar**: Digite e toque no "+"
-2. **Marcar**: Toque na tarefa
-3. **Excluir**: Segure a tarefa
+- **Funcionalidades Visuais:**  
+  - **Modal de Confirmação:** Evita exclusão acidental de personagens.
+  - **Ícones intuitivos:** Indicam ações e status dos personagens.
+  - **Snackbar:** Feedback instantâneo ao usuário após cada ação.
 
-## 📁 Arquivos
+---
 
-```
-mobile-sqlite-app/
-├── App.js          # TODO O CÓDIGO AQUI! 
-├── package.json    # Dependências
-├── app.json       # Configurações
-└── assets/        # Ícones
-```
+### 🎯 Valor das Melhorias
+
+- Navegação mais fácil e intuitiva
+- Segurança nas ações do usuário
+- Experiência visual melhorada
+- Código pronto para crescer e evoluir
+
+---
+
 
 ## 🚀 Para rodar
 
@@ -31,18 +34,7 @@ mobile-sqlite-app/
 npm install
 npm start
 ```
+---
+### 👩‍💻 Dupla
 
-## 💡 Conceitos que ensina
-
-- ✅ **useState** - Para guardar dados
-- ✅ **useEffect** - Para executar no início  
-- ✅ **SQLite** - Banco de dados simples
-- ✅ **FlatList** - Para mostrar listas
-- ✅ **TouchableOpacity** - Para botões
-- ✅ **Alert** - Para perguntas
-
-## 🎓 Perfeito para iniciantes!
-
-**Todo código está em 1 arquivo só** - App.js
-
-Fácil de entender e modificar! 📚
+Anna Beatriz & Beatriz Lima
