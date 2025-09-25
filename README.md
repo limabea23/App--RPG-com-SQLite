@@ -35,6 +35,18 @@ npm install
 npm start
 ```
 ---
+## 📁 Arquivos
+
+```bash
+mobile-sqlite-app/
+├── assets/             
+├── components / 
+├── app.json       
+├── package.json    
+├── app.json            
+```
+---
+
 ### 👩‍💻 Dupla
 
 Anna Beatriz & Beatriz Lima
