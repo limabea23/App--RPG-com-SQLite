@@ -1,6 +1,6 @@
 import React from "react";
-import { useState } from "react";
-import { View, StyleSheet, TextInput, TouchableOpacity, Text } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { TextInput, Button } from "react-native-paper";
 
 export default function AddCharacterForm({ newCharacter, setNewCharacter, addCharacter }) {
     return (
@@ -11,12 +11,26 @@ export default function AddCharacterForm({ newCharacter, setNewCharacter, addCha
                 value={newCharacter}
                 onChangeText={setNewCharacter}
                 onSubmitEditing={addCharacter}
-                placeholderTextColor="#1A0E0A"
+                mode="outlined"
+                theme={{ 
+                    colors: { 
+                        primary: "#C5282F",
+                        underlineColor: "transparent" 
+                    },
+                }}
             />
 
-            <TouchableOpacity style={styles.button} onPress={addCharacter}>
-                <Text style={styles.buttonText}>⚔️</Text>
-            </TouchableOpacity>
+            <Button
+                mode="contained"
+                onPress={addCharacter}
+                style={styles.button}
+                buttonColor="#C5282F"        
+                textColor="#C8E6C9"          
+                icon="sword"                 
+                compact
+            >
+            ⚔️
+            </Button>
         </View>
     );
 }
