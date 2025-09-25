@@ -1,17 +1,10 @@
 // App.js - Party RPG com SQLite
 import React, { useState, useEffect } from "react";
-import {
-  SafeAreaView,
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  FlatList,
-  StyleSheet,
-  Alert,
-} from "react-native";
+import { SafeAreaView, FlatList, StyleSheet, Alert } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import * as SQLite from "expo-sqlite";
+
+import Header from "./components/Header";
 import CharacterCard from "./components/CharacterCard";
 import AddCharacterForm from "./components/AddCharacterForm";
 
@@ -20,7 +13,7 @@ export default function App() {
   const [characters, setCharacters] = useState([]);
   const [newCharacter, setNewCharacter] = useState("");
   const [db, setDb] = useState(null);
-
+    
   // Criar tabela e carregar dados quando app iniciar
   useEffect(() => {
     async function initializeDatabase() {
@@ -121,6 +114,8 @@ export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="dark" />
+
+      <Header />
 
       {/* Adicionar novo personagem */}
       <AddCharacterForm
