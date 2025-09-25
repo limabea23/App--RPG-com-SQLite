@@ -4,47 +4,67 @@
 ### 🧩 Melhorias Aplicadas
 
 - **Componentização:**  
-  Principais partes separadas em componentes (`Header`, `AddCharacterForm`, `CharacterCard`).  
-  *→ Mais organização, manutenção e evolução facilitada.*
+  - **Componentes:** `Header`, `AddCharacterForm`, `CharacterCard`.
+  - **Por quê:** separa responsabilidades e facilita manutenção/testes.
 
-- **UI Profissional:**  
-  Uso da biblioteca **React Native Paper** para Cards, Botões, Inputs, Snackbar e Ícones.  
-  *→ Interface moderna, padronizada e agradável.*
+- **UI com React Native Paper:**  
+  - **Substituições:** `Card`, `Button`, `TextInput`, `IconButton`, `Snackbar`, `Dialog`, `SegmentedButtons`.
+  - **Valor:** visual consistente, acessibilidade e UX melhor.
 
-- **Funcionalidades Visuais:**  
-  - **Modal de Confirmação:** Evita exclusão acidental de personagens.
-  - **Ícones intuitivos:** Indicam ações e status dos personagens.
-  - **Snackbar:** Feedback instantâneo ao usuário após cada ação.
+- **Funcionalidades de Usabilidade/Visuais:**  
+  1) **Modal de confirmação** para adicionar e remover personagem (`Dialog`)
+     - Evita ações acidentais e dá controle ao usuário.
+  2) **Ícones visuais** (`MaterialCommunityIcons`) para ações e status
+     - Ícones de estrela/sono e lixeira tornam ações autoexplicativas.
+  3) **Feedback visual** via Snackbar ao adicionar, remover e recrutar/dispensar
+     - Comunicação imediata do resultado da ação.
+  4) **Filtro de personagens** (Todos | Recrutados | Disponíveis)
+     - Facilita a visualização por estado, melhorando a eficiência do usuário.
+  5) **Animação** ao atualizar a lista (`LayoutAnimation`)
+     - Transições suaves ao inserir/remover/atualizar itens.
 
 ---
 
 ### 🎯 Valor das Melhorias
 
-- Navegação mais fácil e intuitiva
-- Segurança nas ações do usuário
-- Experiência visual melhorada
-- Código pronto para crescer e evoluir
+- Navegação e compreensão mais fáceis.
+- Prevenção de erros do usuário.
+- Feedback imediato para confiança e fluidez.
+- Interface moderna e padronizada.
+- Código pronto para evoluir.
 
 ---
 
 
-## 🚀 Para rodar
+## 🚀 Como rodar
 
+1. **Instalar dependências**
 ```bash
 npm install
+```
+2. **Iniciar**
+```bash
 npm start
 ```
----
-## 📁 Arquivos
 
-```bash
-app-RPG-COM_SQLITE
-├── assets/             
-├── components / 
-├── App.js      
-├── app.json     
-└── package.json                
+> Requisitos: Node, Expo, e dispositivos/emuladores configurados.
+
+---
+
+## 📁 Estrutura
+
 ```
+app-RPG-COM_SQLITE
+├── assets/
+├── components/
+│   ├── AddCharacterForm.js
+│   ├── CharacterCard.js
+│   └── Header.js
+├── App.js
+├── app.json
+└── package.json
+```
+
 ---
 
 ### 👩‍💻 Dupla

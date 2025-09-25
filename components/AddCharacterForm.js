@@ -26,11 +26,10 @@ export default function AddCharacterForm({ newCharacter, setNewCharacter, addCha
                 style={styles.button}
                 buttonColor="#C5282F"        
                 textColor="#C8E6C9"          
-                icon="sword"                 
+                icon="sword-cross"                 
                 compact
-            >
-            ⚔️
-            </Button>
+                accessibilityLabel="Adicionar personagem"
+            />
         </View>
     );
 }
@@ -53,18 +52,12 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "#C5282F", 
-    padding: 12,
+    paddingHorizontal: 12,
     borderRadius: 8,
     marginLeft: 10,
     justifyContent: "center",
     alignItems: "center",
-    width: 50,
     borderWidth: 2,
     borderColor: "#E69A28",
-  },
-  buttonText: {
-    color: "#C8E6C9", 
-    fontSize: 18,
-    textAlign: "center",
   },
 });
